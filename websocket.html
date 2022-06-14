@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+
+<html>
+   <head>
+      
+      <script type = "text/javascript">
+         function WebSocketTest() {
+            
+            if ("WebSocket" in window) {
+               console.log("WebSocket is supported by your Browser!");
+               
+               window.ws = new WebSocket("wss://ws.twelvedata.com/v1/quotes/price?apikey=749c49cde93041d8b2ef1844579f8cc4");
+				
+               ws.onopen = function() {
+                  
+                  console.log("Message is sent...");
+
+                   
+               };
+               ws.onmessage = function (evt) { 
+                  var received_msg = JSON.parse(evt.data);
+                  console.log(received_msg);
+                  let row1 = document.getElementById(received_msg["symbol"]+"_price");
+                  let row2 = document.getElementById(received_msg["symbol"]+"_volume");
+                  let row3 = document.getElementById(received_msg["symbol"]+"_ask");
+                  let row4 = document.getElementById(received_msg["symbol"]+"_bid");
+                  row1.innerHTML = received_msg["price"];
+                  row2.innerHTML = received_msg["day_volume"];
+                  row3.innerHTML = received_msg["ask"];
+                  row4.innerHTML = received_msg["bid"];
+                  console.log(received_msg);
+               };
+				
+               ws.onclose = function() { 
+                  
+                  // websocket is closed.
+                  console.log("Connection is closed..."); 
+               };
+               
+            } else {
+              
+               // The browser doesn't support WebSocket
+               console.log("WebSocket NOT supported by your Browser!");
+            }
+         }
+         function dataStarter() {
+                ws.send('{ "action": "subscribe", "params": { "symbols": "AAPL,QQQ,EUR/USD,USD/JPY,BTC/USD" } }');
+         }
+                
+      </script>
+		
+   </head>
+   
+   <body>
+      <div id = "sse">
+          <h2 id="data"></h2>
+          <h3>
+            Press Run websocket to start the websocket connection<br>
+            wait for 2 seconds<br>
+            And then press Start data to start the data stream
+          </h3>
+         <button onclick="WebSocketTest()">Run WebSocket</button>
+         <button onclick="dataStarter()">Start Data</button>
+         <table border="1">
+             <tr>
+                    <td>symbols</td>
+                    <td>AAPL</td>
+                    <td>QQQ</td>
+                    <td>EUR/USD</td>
+                    <td>USD/JPY</td>
+                    <td>BTC/USD</td>
+             </tr>
+             <tr>
+                    <td>price</td>
+                    <td id="AAPL_price"></td>
+                    <td id="QQQ_price"></td>
+                    <td id="EUR/USD_price"></td>
+                    <td id="USD/JPY_price"></td>
+                    <td id="BTC/USD_price"></td>
+             </tr>
+             <tr>
+                <td>Volume</td>
+                <td id="AAPL_volume"></td>
+                <td id="QQQ_volume"></td>
+                <td id="EUR/USD_volume"></td>
+                <td id="USD/JPY_volume"></td>
+                <td id="BTC/USD_volume"></td>
+            </tr>
+            <tr>
+                <td>ask</td>
+                <td id="AAPL_ask"></td>
+                <td id="QQQ_ask"></td>
+                <td id="EUR/USD_ask"></td>
+                <td id="USD/JPY_ask"></td>
+                <td id="BTC/USD_ask"></td>
+            </tr>
+            <tr>
+                <td>bid</td>
+                <td id="AAPL_bid"></td>
+                <td id="QQQ_bid"></td>
+                <td id="EUR/USD_bid"></td>
+                <td id="USD/JPY_bid"></td>
+                <td id="BTC/USD_bid"></td>
+            </tr>
+         </table>
+      </div>
+      
+   </body>
+</html>
